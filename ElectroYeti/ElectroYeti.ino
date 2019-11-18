@@ -55,9 +55,10 @@ void measureCurrentPower() {
 }
 
 void displayOnLCD() {
-  lcd.init();                      // initialize the lcd
+  lcd.init(); // initialize the lcd
   lcd.init();
-  // Print a message to the LCD.
+  
+  // Print current & power usage to the LCD.
   lcd.backlight();
   lcd.setCursor(0, 0);
   lcd.print("Amps: ");
@@ -67,6 +68,7 @@ void displayOnLCD() {
   lcd.print("Watts: ");
   lcd.print(watts);
 
+  // Print temperature & humidity to the LCD.
   lcd.setCursor(0, 2);
   lcd.print("T: ");
   lcd.print(temperature);
@@ -74,6 +76,7 @@ void displayOnLCD() {
   lcd.print("H: ");
   lcd.print(humidity);
   lcd.print("%");
+  
   lcd.setCursor(0, 3);
   lcd.print("Pwred By ElectroYeti");
 
