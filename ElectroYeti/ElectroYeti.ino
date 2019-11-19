@@ -7,12 +7,15 @@
 #include <dht11.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-#include "EmonLib.h"             // Include Emon Library
+#include "EmonLib.h" // Include Emon Library
+#include <SoftwareSerial.h>
 
 #define VOLT_CAL 148.7
-#define CURRENT_CAL 62.6
+#define CURRENT_CAL 62.6//1.1 //62.6
 
-EnergyMonitor emon1;             // Create an instance
+EnergyMonitor emon1; // Create an instance
+
+SoftwareSerial ss(5, 6);//RX, TX
 
 #define DHT11PIN A1
 
@@ -24,9 +27,12 @@ float humidity;
 float currentDraw = 0.0;
 float powerUsage = 0.0;
 
+//int data; //Initialized variable to store recieved data
+
 
 void setup()
 {
+  ss.begin(9600);
   Serial.begin(9600);
 
   emon1.voltage(1, VOLT_CAL, 1.7);  // Voltage: input pin, calibration, phase_shift
@@ -41,21 +47,10 @@ void loop()
   measureTH();
   measureCurrentPower();
   displayOnLCD();
+  writeToNodeMCU();
+  //  readSerialData();
   sendIFTTTSMS();
-  delay(5000);
-
-}
-
-void measureTH() {
-  int chk = DHT11.read(DHT11PIN);
-
-  Serial.print("Humidity (%): ");
-  humidity = (float)DHT11.humidity;
-  Serial.println(humidity, 2);
-
-  Serial.print("Temperature (F): ");
-  temperature = ((float)DHT11.temperature) * 1.8 + 32;
-  Serial.println(temperature, 2);
+  delay(500);
 
 }
 
@@ -78,6 +73,19 @@ void measureCurrentPower() {
   Serial.print("Watts: ");
   Serial.println(powerUsage);
   Serial.println("");
+}
+
+void measureTH() {
+  int chk = DHT11.read(DHT11PIN);
+
+  Serial.print("Humidity (%): ");
+  humidity = (float)DHT11.humidity;
+  Serial.println(humidity, 2);
+
+  Serial.print("Temperature (F): ");
+  temperature = ((float)DHT11.temperature) * 1.8 + 32;
+  Serial.println(temperature, 2);
+
 }
 
 void displayOnLCD() {
@@ -106,6 +114,22 @@ void displayOnLCD() {
   lcd.setCursor(0, 3);
   lcd.print("Pwred By ElectroYeti");
 
+}
+
+void writeToNodeMCU() {
+  Serial.println("Trying to write to node mcu...");
+  if (ss.available() > 0)
+  {
+    Serial.println("writing to node mcu...");
+    //    powerUsage=300.0;
+    ss.write(powerUsage);
+  }
+
+}
+
+void readSerialData() {
+  //  data = Serial.read(); //Read the serial data and store it
+  //  Serial.println("Data read from ESP8266: " + String(data));
 }
 
 void sendIFTTTSMS() {
