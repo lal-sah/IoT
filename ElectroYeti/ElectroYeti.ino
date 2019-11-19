@@ -69,6 +69,9 @@ void measureCurrentPower() {
   Serial.print("Current: ");
   Serial.println(currentDraw);
 
+  //comment next line
+  currentDraw = 2.4;
+
   powerUsage = currentDraw * supplyVoltage;
   Serial.print("Watts: ");
   Serial.println(powerUsage);
@@ -120,9 +123,13 @@ void writeToNodeMCU() {
   Serial.println("Trying to write to node mcu...");
   if (ss.available() > 0)
   {
-    Serial.println("writing to node mcu...");
-    //    powerUsage=300.0;
-    ss.write(powerUsage);
+    Serial.println("Power Usage: " + String(powerUsage));
+
+    int pw = (int)powerUsage;
+    Serial.print("Writing power usage to node mcu...");
+    Serial.println(pw);
+
+    ss.write(pw);
   }
 
 }
