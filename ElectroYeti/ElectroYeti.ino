@@ -17,6 +17,8 @@ EnergyMonitor emon1; // Create an instance
 
 SoftwareSerial ss(5, 6);//RX, TX
 
+int delayMillis = 500;
+
 #define DHT11PIN A1
 
 LiquidCrystal_I2C lcd(0x3F, 20, 4); // set the LCD address to 0x27 for a 16 chars and 2 line display
@@ -50,7 +52,7 @@ void loop()
   writeToNodeMCU();
   //  readSerialData();
   sendIFTTTSMS();
-  delay(500);
+  delay(delayMillis);
 
 }
 
@@ -69,8 +71,13 @@ void measureCurrentPower() {
   Serial.print("Current: ");
   Serial.println(currentDraw);
 
-  //comment next line
-  currentDraw = 2.4;
+  //TODO: comment next line
+  if(currentDraw < 2.0){
+    currentDraw = 2.4;
+    delayMillis = 120000;
+  } else {
+    delayMillis = 500;
+  }
 
   powerUsage = currentDraw * supplyVoltage;
   Serial.print("Watts: ");
@@ -126,6 +133,7 @@ void writeToNodeMCU() {
     Serial.println("Power Usage: " + String(powerUsage));
 
     int pw = (int)powerUsage;
+    //    int pw = 250;
     Serial.print("Writing power usage to node mcu...");
     Serial.println(pw);
 
