@@ -71,14 +71,6 @@ void measureCurrentPower() {
   Serial.print("Current: ");
   Serial.println(currentDraw);
 
-  //TODO: comment next line
-  if(currentDraw < 2.0){
-    currentDraw = 2.4;
-    delayMillis = 120000;
-  } else {
-    delayMillis = 500;
-  }
-
   powerUsage = currentDraw * supplyVoltage;
   Serial.print("Watts: ");
   Serial.println(powerUsage);
@@ -132,8 +124,11 @@ void writeToNodeMCU() {
   {
     Serial.println("Power Usage: " + String(powerUsage));
 
-    int pw = (int)powerUsage;
-    //    int pw = 250;
+    int pw = (int)powerUsage;//write data conversion logic
+    if (pw < 250) {
+
+    }
+    pw = 250;
     Serial.print("Writing power usage to node mcu...");
     Serial.println(pw);
 
