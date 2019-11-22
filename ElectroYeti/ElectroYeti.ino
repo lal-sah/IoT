@@ -132,7 +132,7 @@ void writeToNodeMCU() {
     }
 
     if (prototypeCountdown > 0) {
-      pw = 800;
+      pw = 250;
       Serial.print("Writing power usage to node mcu...");
       Serial.println(pw);
 
