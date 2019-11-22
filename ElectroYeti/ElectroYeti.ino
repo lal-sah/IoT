@@ -11,7 +11,7 @@
 #include <SoftwareSerial.h>
 
 #define VOLT_CAL 148.7
-#define CURRENT_CAL 62.6//1.1 //62.6
+#define CURRENT_CAL 88.1//1.11//62.6//1.1 //62.6
 
 EnergyMonitor emon1; // Create an instance
 
@@ -28,6 +28,8 @@ float temperature;
 float humidity;
 float currentDraw = 0.0;
 float powerUsage = 0.0;
+
+int prototypeCountdown = 25;
 
 //int data; //Initialized variable to store recieved data
 
@@ -128,11 +130,15 @@ void writeToNodeMCU() {
     if (pw < 250) {
 
     }
-    pw = 250;
-    Serial.print("Writing power usage to node mcu...");
-    Serial.println(pw);
 
-    ss.write(pw);
+    if (prototypeCountdown > 0) {
+      pw = 800;
+      Serial.print("Writing power usage to node mcu...");
+      Serial.println(pw);
+
+      ss.write(pw);
+      prototypeCountdown--;
+    }
   }
 
 }
